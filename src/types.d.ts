@@ -4,6 +4,7 @@
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 
+
 // Preload types
 interface ThemeModeContext {
     toggle: () => Promise<boolean>;
@@ -16,9 +17,21 @@ interface ElectronWindow {
     minimize: () => Promise<void>;
     maximize: () => Promise<void>;
     close: () => Promise<void>;
+    connect: (ip: string, user: string, pass: string, port: string) => Promise<boolean>;
+    saveSettings: (ip: string, user: string, pass: string, port: string) => Promise<void>;
+    getSettings: () => Promise<{
+      ip: string;
+      user: string;
+      pass: string;
+      port: string;
+    }>;
+    on: (channel: string, func: (...args: unknown[]) => void) => () => void;
+    getAssetList: () => Promise<any>;
+    getAssetData: (asset: any) => Promise<any>;
 }
 
 declare interface Window {
     themeMode: ThemeModeContext;
     electronWindow: ElectronWindow;
 }
+

@@ -3,10 +3,16 @@ import registerListeners from "./helpers/ipc/listeners-register";
 // "electron-squirrel-startup" seems broken when packaging with vite
 //import started from "electron-squirrel-startup";
 import path from "path";
+import { AuroraFtpClient } from "./helpers/ipc/ftp";
 
 const inDevelopment = process.env.NODE_ENV === "development";
+let ftpClient: AuroraFtpClient | null = null;
 
 function createWindow() {
+    if (ftpClient) {
+        ftpClient.disconnect();
+        ftpClient = null;
+      }
     const preload = path.join(__dirname, "preload.js");
     const mainWindow = new BrowserWindow({
         width: 800,
@@ -45,5 +51,16 @@ app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
     }
+});
+
+app.on('window-all-closed', () => {
+  if (ftpClient) {
+    ftpClient.disconnect();
+    ftpClient = null;
+  }
+  
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 //osX only ends
